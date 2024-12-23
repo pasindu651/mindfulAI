@@ -10,14 +10,27 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:500/api/login", {
-        email: data.email,
-        password: data.password,
-      })
+      .post(
+        "http://localhost:500/api/login",
+        {
+          email: data.email,
+          password: data.password,
+        },
+        { withCredentials: true }
+      )
       .then((result) => {
         console.log(result);
         if (result.data.success) {
-          navigate("/");
+          axios
+            .get("http://localhost:500/api/user", {
+              withCredentials: true,
+            })
+            .then((response) => {
+              if (response.data.user) {
+                //send data to frontend using state
+                navigate("/", { state: { user: response.data.user } });
+              }
+            });
         } else {
           console.log(result.data.success);
           alert(result.data.message || "Login failed");
