@@ -3,16 +3,35 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import axios from "axios";
-
-const handleSubmit = (e) => {
-  e.preventDefault();
-  axios
-    .post("/", { firstName, lastName, email, password })
-    .then((result) => console.log(result))
-    .catch((err) => console.log(err));
-};
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("http://localhost:500/api/register", {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+      })
+      .then((result) => {
+        if (result.status == 201) {
+          console.log("User created successfully");
+          navigate("/login");
+        }
+        console.log(result);
+      })
+      .catch((err) => {
+        if (err.response && err.response.status == 400) {
+          alert("Email already exists.");
+        } else {
+          console.log(err);
+        }
+      });
+  };
+
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
@@ -66,6 +85,7 @@ export default function Register() {
             <div className="flex flex-column gap-2">
               <label htmlFor="password">Password</label>
               <Password
+                placeholder="Enter your password..."
                 id="password"
                 value={data.password}
                 onChange={(e) => setData({ ...data, password: e.target.value })}
@@ -73,7 +93,12 @@ export default function Register() {
             </div>
           </div>
           <div className="flex align-items-center justify-content-center h-4rem m-2">
-            <Button className="justify-content-center w-full">Register</Button>
+            <Button
+              onClick={handleSubmit}
+              className="justify-content-center w-full"
+            >
+              Register
+            </Button>
           </div>
         </div>
       </div>
