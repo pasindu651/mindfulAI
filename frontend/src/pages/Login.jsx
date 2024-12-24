@@ -76,6 +76,7 @@ export default function Login() {
             <div className="flex flex-column gap-2">
               <label htmlFor="password">Password</label>
               <Password
+                placeholder="Enter your password..."
                 value={data.password}
                 id="password"
                 onChange={(e) => setData({ ...data, password: e.target.value })}
