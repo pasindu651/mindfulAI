@@ -4,10 +4,11 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { IsLoggedInContext, SetIsLoggedInContext } from "../App";
+import { IsLoggedInContext, SetIsLoggedInContext, UserContext } from "../App";
 
 export default function Login() {
   const SetIsLoggedIn = useContext(SetIsLoggedInContext);
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,9 +30,10 @@ export default function Login() {
             })
             .then((response) => {
               if (response.data.user) {
+                setUser(response.data.user);
                 SetIsLoggedIn(true);
                 //send data to frontend using state
-                navigate("/", { state: { user: response.data.user } });
+                navigate("/");
               }
             });
         } else {

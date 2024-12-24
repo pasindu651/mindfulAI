@@ -96,6 +96,8 @@ app.post("/api/logout", async (req, res) => {
       if (err) {
         res.status(500).json({ success: false, message: "Failed to logout" });
       } else {
+        res.clearCookie("connect.sid");
+        console.log(" destroy successfully and cookie cleared");
         res
           .status(200)
           .json({ success: true, message: "Logged out successfully" });
