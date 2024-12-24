@@ -90,6 +90,22 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+app.post("/api/logout", async (req, res) => {
+  if (req.session) {
+    req.session.destroy((err) => {
+      if (err) {
+        res.status(500).json({ success: false, message: "Failed to logout" });
+      } else {
+        res
+          .status(200)
+          .json({ success: true, message: "Logged out successfully" });
+      }
+    });
+  } else {
+    res.status(400).json({ success: false, message: "No session found" });
+  }
+});
+
 app.listen(PORT, () => {
   connectDB();
   console.log("Server started at http://localhost:" + PORT);
