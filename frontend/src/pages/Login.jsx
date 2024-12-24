@@ -30,7 +30,6 @@ export default function Login() {
             .then((response) => {
               if (response.data.user) {
                 SetIsLoggedIn(true);
-                console.log(response.data.user);
                 //send data to frontend using state
                 navigate("/", { state: { user: response.data.user } });
               }

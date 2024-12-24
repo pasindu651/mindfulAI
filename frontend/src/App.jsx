@@ -9,15 +9,19 @@ import axios from "axios";
 
 export const IsLoggedInContext = createContext();
 export const SetIsLoggedInContext = createContext();
+export const UserContext = createContext();
+
 function App() {
   const [IsLoggedIn, SetIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
   useEffect(() => {
     axios
       .get("http://localhost:500/api/user", { withCredentials: true })
       .then((response) => {
+        console.log("here", response.data.user);
         if (response.data.user) {
           SetIsLoggedIn(true);
-          console.log(IsLoggedIn);
+          setUser(response.data.user);
         } else {
           SetIsLoggedIn(false);
         }
@@ -26,22 +30,24 @@ function App() {
   }, []);
   return (
     <>
-      <IsLoggedInContext.Provider value={IsLoggedIn}>
-        <SetIsLoggedInContext.Provider value={SetIsLoggedIn}>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/register"
-              element={IsLoggedIn ? <Navigate to="/" /> : <Register />}
-            />
-            <Route
-              path="/login"
-              element={IsLoggedIn ? <Navigate to="/" /> : <Login />}
-            />
-          </Routes>
-        </SetIsLoggedInContext.Provider>
-      </IsLoggedInContext.Provider>
+      <UserContext.Provider value={{ user, setUser }}>
+        <IsLoggedInContext.Provider value={IsLoggedIn}>
+          <SetIsLoggedInContext.Provider value={SetIsLoggedIn}>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/register"
+                element={IsLoggedIn ? <Navigate to="/" /> : <Register />}
+              />
+              <Route
+                path="/login"
+                element={IsLoggedIn ? <Navigate to="/" /> : <Login />}
+              />
+            </Routes>
+          </SetIsLoggedInContext.Provider>
+        </IsLoggedInContext.Provider>
+      </UserContext.Provider>
     </>
   );
 }
