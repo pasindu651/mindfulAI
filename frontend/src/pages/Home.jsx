@@ -5,6 +5,7 @@ import axios from "axios";
 import { UserContext } from "../App";
 import { IsLoggedInContext } from "../App";
 import { Calendar } from "../components/calendar";
+import { Tasks } from "../components/tasks";
 
 export default function Home() {
   const { user, setUser } = useContext(UserContext); // Access user from context
@@ -13,7 +14,7 @@ export default function Home() {
   console.log(user);
   return (
     <>
-      {IsLoggedIn && <Calendar />}
+      {IsLoggedIn && <Tasks />}
       <div>{`Hello ${user ? user.firstName : ""}`}</div>
     </>
   );
