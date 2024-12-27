@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import bcrypt from "bcryptjs";
 import User from "../models/userModel.js";
 import dotenv from "dotenv";
+import Task from "../models/taskModel.js";
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ export const login = async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (passwordMatch) {
         req.session.user = {
-          id: user.id_,
+          id: user._id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
@@ -93,11 +94,24 @@ export const getUser = (req, res) => {
 };
 
 export const chat = async (req, res) => {
-  const { prompt } = req.body;
   try {
+    const { prompt } = req.body;
+
+    const systemMessage = {
+      role: "system",
+      content:
+        "You are a task scheduler. Given a task name, deadline, and expected duration, calculate the optimal time to start the task, ensuring it fits before the deadline.",
+    };
+
+    const userMessage = {
+      role: "user",
+      content: prompt,
+    };
+
+    const messages = [systemMessage, userMessage];
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
-      messages: [{ role: "assistant", content: prompt }], //has role and content
+      messages: messages, //has role and content
       response_format: {
         type: "text",
       },
@@ -112,5 +126,28 @@ export const chat = async (req, res) => {
       .json({ success: true, data: response.choices[0].message.content });
   } catch (error) {
     res.status(500).json({ success: false, data: error });
+  }
+};
+
+export const createTask = async (req, res) => {
+  try {
+    const { name, dueDay, dueTime } = req.body;
+    if (req.session) {
+      const newTask = await new Task({
+        name,
+        dueDay,
+        dueTime,
+        done: false,
+        user: req.session.user.id,
+      });
+      await newTask.save();
+      res
+        .status(201)
+        .json({ success: true, message: "Task created successfully" });
+    } else {
+      res.status(400).json({ success: false, message: "Not authenticated" });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error });
   }
 };

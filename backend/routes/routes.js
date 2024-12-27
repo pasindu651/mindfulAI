@@ -13,6 +13,6 @@ router.post("/login", login);
 router.post("/register", register);
 router.post("/logout", logout);
 router.get("/user", getUser);
-router.get("/chat", chat);
+router.post("/chat", chat);
 
 export default router;
