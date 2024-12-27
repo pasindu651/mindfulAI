@@ -14,8 +14,9 @@ export default function Home() {
   console.log(user);
   return (
     <>
-      {IsLoggedIn && <Tasks />}
       <div>{`Hello ${user ? user.firstName : ""}`}</div>
+
+      {IsLoggedIn && <Tasks />}
     </>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { Paginator } from "primereact/paginator";
 import { useState } from "react";
 
-export const Calendar = () => {
+export const Calendar = (props) => {
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -12,11 +12,12 @@ export const Calendar = () => {
     "Friday",
     "Saturday",
   ];
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
   //Get the number of days in the current month
-  const numDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const numDays = props.numDays;
+  const currentYear = props.currentYear;
+  const currentMonth = props.currentMonth;
+  const currentDate = props.currentDate;
+
   //console.log(currentDate.getDate());
 
   //array of all the days of the month
