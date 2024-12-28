@@ -4,6 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
+import { TaskInfo } from "./taskInfo";
 
 export const Tasks = (props) => {
   const currentDate = new Date();
@@ -61,7 +62,20 @@ export const Tasks = (props) => {
         currentDate={currentDate}
         setTasks={setTasks} //pass setTasks function as a prop so calendar can change tasks state
       />
-
+      {tasks ? (
+        tasks.map((task) => (
+          <TaskInfo
+            key={task._id}
+            id={task._id}
+            name={task.name}
+            dueDay={task.dueDay}
+            dueHour={task.dueHour}
+            dueMinute={task.dueMinute}
+          />
+        ))
+      ) : (
+        <p>No tasks yet</p>
+      )}
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
           <div className="flex align-items-center justify-content-center m-2">

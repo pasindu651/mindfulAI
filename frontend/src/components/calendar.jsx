@@ -33,22 +33,24 @@ export const Calendar = ({
   const [day, setDay] = useState(currentDate.getDate());
   const [weekday, setWeekday] = useState(dates[first / 10].dayOfWeek);
 
+  //given a day, this function fetches the tasks for that day
+  const fetchTasks = async (day) => {
+    axios
+      .post(
+        "http://localhost:500/api/task/day",
+        { day },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        setTasks(response.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
-    const fetchTasks = async () => {
-      axios
-        .post(
-          "http://localhost:500/api/task/day",
-          { day },
-          { withCredentials: true }
-        )
-        .then((response) => {
-          setTasks(response.data.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    fetchTasks();
+    fetchTasks(day);
   }, [day]);
 
   const onPageChange = (event) => {
