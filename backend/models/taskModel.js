@@ -2,8 +2,9 @@ import mongoose, { mongo } from "mongoose";
 
 const taskSchema = new mongoose.Schema({
   name: String,
-  dueDay: mongoose.SchemaTypes.Date,
-  dueTime: Number,
+  dueDay: Number,
+  dueHour: Number,
+  dueMinute: Number,
   done: mongoose.SchemaTypes.Boolean,
   user: mongoose.SchemaTypes.ObjectId,
 });

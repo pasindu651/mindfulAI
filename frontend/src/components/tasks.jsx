@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar } from "./calendar";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
+import axios from "axios";
 
 export const Tasks = (props) => {
   const currentDate = new Date();
@@ -10,9 +11,29 @@ export const Tasks = (props) => {
   const currentYear = currentDate.getFullYear();
   //Get the number of days in the current month
   const numDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(data);
+    axios
+      .post(
+        "http://localhost:500/api/task/create",
+        {
+          name: data.name,
+          dueDay: data.dueDay,
+          dueHour: data.dueHour,
+          dueMinute: data.dueMinute,
+        },
+        { withCredentials: true }
+      )
+      .then((result) => {
+        if (result.status == 201) {
+          console.log("Task created successfully");
+        }
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   const hours = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
@@ -29,6 +50,7 @@ export const Tasks = (props) => {
     dueHour: null,
     dueMinute: null,
   });
+  const [tasks, setTasks] = useState([]); //store tasks of selected date
 
   return (
     <>
@@ -37,6 +59,7 @@ export const Tasks = (props) => {
         currentMonth={currentMonth}
         currentYear={currentYear}
         currentDate={currentDate}
+        setTasks={setTasks} //pass setTasks function as a prop so calendar can change tasks state
       />
 
       <div className="flex justify-content-center">

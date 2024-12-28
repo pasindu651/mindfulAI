@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Paginator } from "primereact/paginator";
 import { useState } from "react";
+import axios from "axios";
 
-export const Calendar = (props) => {
+export const Calendar = ({
+  numDays,
+  currentYear,
+  currentMonth,
+  currentDate,
+  setTasks,
+}) => {
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -12,14 +19,6 @@ export const Calendar = (props) => {
     "Friday",
     "Saturday",
   ];
-  //Get the number of days in the current month
-  const numDays = props.numDays;
-  const currentYear = props.currentYear;
-  const currentMonth = props.currentMonth;
-  const currentDate = props.currentDate;
-
-  //console.log(currentDate.getDate());
-
   //array of all the days of the month
   const dates = Array.from({ length: numDays }, (_, i) => {
     const date = new Date(currentYear, currentMonth, i + 1); // i+1 ensures days start from 1
@@ -33,6 +32,24 @@ export const Calendar = (props) => {
   const [rows, setRows] = useState(10);
   const [day, setDay] = useState(currentDate.getDate());
   const [weekday, setWeekday] = useState(dates[first / 10].dayOfWeek);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      axios
+        .post(
+          "http://localhost:500/api/task/day",
+          { day },
+          { withCredentials: true }
+        )
+        .then((response) => {
+          setTasks(response.data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    fetchTasks();
+  }, [day]);
 
   const onPageChange = (event) => {
     setFirst(event.first);

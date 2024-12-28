@@ -87,6 +87,7 @@ export const logout = async (req, res) => {
 export const getUser = (req, res) => {
   //if the session is successfully created, send user information to frontend
   if (req.session.user) {
+    console.log(req.session);
     res.json({ success: true, user: req.session.user });
   } else {
     res.status(401).json({ success: false, message: "Not authenticated" });
@@ -131,12 +132,15 @@ export const chat = async (req, res) => {
 
 export const createTask = async (req, res) => {
   try {
-    const { name, dueDay, dueTime } = req.body;
+    const { name, dueDay, dueHour, dueMinute } = req.body;
     if (req.session) {
+      console.log(req.session);
+      console.log(req.session.user.id);
       const newTask = await new Task({
         name,
         dueDay,
-        dueTime,
+        dueHour,
+        dueMinute,
         done: false,
         user: req.session.user.id,
       });
@@ -146,6 +150,22 @@ export const createTask = async (req, res) => {
         .json({ success: true, message: "Task created successfully" });
     } else {
       res.status(400).json({ success: false, message: "Not authenticated" });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error });
+  }
+};
+
+//given a certain date, fetch all the tasks for that date
+
+export const getDayTask = async (req, res) => {
+  try {
+    if (req.session) {
+      const { day } = req.body;
+      const tasks = await Task.find({ user: req.session.user.id, dueDay: day });
+      res.status(200).json({ success: true, data: tasks });
+    } else {
+      res.status(401).json({ success: false, message: "Not authenticated" });
     }
   } catch (error) {
     res.status(500).json({ success: false, message: error });
