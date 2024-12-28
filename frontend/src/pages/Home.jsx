@@ -4,8 +4,7 @@ import { Button } from "primereact/button";
 import axios from "axios";
 import { UserContext } from "../App";
 import { IsLoggedInContext } from "../App";
-import { Calendar } from "../components/calendar";
-import { Tasks } from "../components/tasks";
+import { TasksWithCalendar } from "../components/TasksWithCalendar";
 
 export default function Home() {
   const { user, setUser } = useContext(UserContext); // Access user from context
@@ -16,7 +15,7 @@ export default function Home() {
     <>
       <div>{`Hello ${user ? user.firstName : ""}`}</div>
 
-      {IsLoggedIn && <Tasks />}
+      {IsLoggedIn && <TasksWithCalendar />}
     </>
   );
 }

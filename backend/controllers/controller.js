@@ -146,9 +146,7 @@ export const createTask = async (req, res) => {
         user: req.session.user.id,
       });
       await newTask.save();
-      res
-        .status(201)
-        .json({ success: true, message: "Task created successfully" });
+      res.status(201).json({ success: true, data: newTask._id });
     } else {
       res.status(400).json({ success: false, message: "Not authenticated" });
     }

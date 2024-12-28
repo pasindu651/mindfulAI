@@ -1,18 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Calendar } from "./calendar";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
 import { TaskInfo } from "./taskInfo";
+import { Paginator } from "primereact/paginator";
 
-export const Tasks = () => {
+export const TasksWithCalendar = () => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
   //Get the number of days in the current month
   const numDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const [day, setDay] = useState(currentDate.getDate());
+  const [tasks, setTasks] = useState([]); //store tasks of selected date
 
+  //given a day, this function fetches the tasks for that day
+  useEffect(() => {
+    const fetchTasks = async () => {
+      axios
+        .post(
+          "http://localhost:500/api/task/day",
+          { day },
+          { withCredentials: true }
+        )
+        .then((response) => {
+          setTasks(response.data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    fetchTasks();
+  }, [day]); //run when either day or tasks changes
+
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setDay((event.first + 10) / 10); // the selected day of the month
+    setWeekday(dates[first / 10].dayOfWeek); //the selected weekday
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
@@ -31,6 +59,30 @@ export const Tasks = () => {
       .then((result) => {
         if (result.status == 201) {
           console.log("Task created successfully");
+          if (data.dueDay == day) {
+            //immediately rerender if the paginator is on the page where the task should render
+            setTasks([
+              ...tasks,
+              {
+                _id: result.data.data,
+                name: data.name,
+                dueDay: data.dueDay,
+                dueHour: data.dueHour,
+                dueMinute: data.dueMinute,
+                durationHours: data.durationHours,
+                durationMinutes: data.durationMinutes,
+              },
+            ]);
+          }
+          //reset the form once submitted
+          setData({
+            name: "",
+            dueDay: null,
+            dueHour: null,
+            dueMinute: null,
+            durationHours: null,
+            durationMinutes: null,
+          });
         }
         console.log(result);
       })
@@ -38,13 +90,30 @@ export const Tasks = () => {
         console.log(err);
       });
   };
+
   const hours = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24,
   ];
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  //array of all the days of the month
+  const dates = Array.from({ length: numDays }, (_, i) => {
+    const date = new Date(currentYear, currentMonth, i + 1); // i+1 ensures days start from 1
+    return {
+      dayOfWeek: daysOfWeek[date.getDay()], // Get the weekday
+      dayOfMonth: i + 1, // Day of the month
+    };
+  });
   const days = Array.from({ length: numDays }, (_, i) => i + 1);
   const minutes = Array.from({ length: 60 }, (_, i) => i);
-
   const [data, setData] = useState({
     name: "",
     dueDay: null,
@@ -53,17 +122,24 @@ export const Tasks = () => {
     durationHours: null,
     durationMinutes: null,
   });
-  const [tasks, setTasks] = useState([]); //store tasks of selected date
+
+  const [first, setFirst] = useState((currentDate.getDate() - 1) * 10); //index goes up by 10
+  const [rows, setRows] = useState(10);
+  const [weekday, setWeekday] = useState(dates[first / 10].dayOfWeek);
 
   return (
     <>
-      <Calendar
-        numDays={numDays}
-        currentMonth={currentMonth}
-        currentYear={currentYear}
-        currentDate={currentDate}
-        setTasks={setTasks} //pass setTasks function as a prop so calendar can change tasks state
-      />
+      <h2>{dates[first / 10].dayOfWeek}</h2>
+      <h2>{day}</h2>
+      <div className="card">
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={numDays * 10}
+          onPageChange={onPageChange}
+        />
+      </div>
+      {console.log(tasks)}
       {tasks ? (
         tasks.map((task) => (
           <TaskInfo
@@ -78,7 +154,7 @@ export const Tasks = () => {
           />
         ))
       ) : (
-        <p>No tasks yet</p>
+        <h1>No tasks yet</h1>
       )}
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
