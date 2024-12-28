@@ -101,7 +101,7 @@ export const chat = async (req, res) => {
     const systemMessage = {
       role: "system",
       content:
-        "You are a task scheduler. Given a task name, deadline, and expected duration, calculate the optimal time to start the task, ensuring it fits before the deadline.",
+        "You are a task scheduler. You will be given all the tasks of a current day with their expected durations and expected due hour and due minute.   Given a task name, deadline, and expected duration, calculate the optimal time to start the task, ensuring it fits before the deadline.",
     };
 
     const userMessage = {
@@ -132,15 +132,16 @@ export const chat = async (req, res) => {
 
 export const createTask = async (req, res) => {
   try {
-    const { name, dueDay, dueHour, dueMinute } = req.body;
+    const { name, dueDay, dueHour, dueMinute, durationHours, durationMinutes } =
+      req.body;
     if (req.session) {
-      console.log(req.session);
-      console.log(req.session.user.id);
       const newTask = await new Task({
         name,
         dueDay,
         dueHour,
         dueMinute,
+        durationHours,
+        durationMinutes,
         done: false,
         user: req.session.user.id,
       });

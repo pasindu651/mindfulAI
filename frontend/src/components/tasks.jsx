@@ -6,7 +6,7 @@ import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
 import { TaskInfo } from "./taskInfo";
 
-export const Tasks = (props) => {
+export const Tasks = () => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -23,6 +23,8 @@ export const Tasks = (props) => {
           dueDay: data.dueDay,
           dueHour: data.dueHour,
           dueMinute: data.dueMinute,
+          durationHours: data.durationHours,
+          durationMinutes: data.durationMinutes,
         },
         { withCredentials: true }
       )
@@ -45,11 +47,11 @@ export const Tasks = (props) => {
 
   const [data, setData] = useState({
     name: "",
-    durationHours: null,
-    durationMinutes: null,
     dueDay: null,
     dueHour: null,
     dueMinute: null,
+    durationHours: null,
+    durationMinutes: null,
   });
   const [tasks, setTasks] = useState([]); //store tasks of selected date
 
@@ -71,6 +73,8 @@ export const Tasks = (props) => {
             dueDay={task.dueDay}
             dueHour={task.dueHour}
             dueMinute={task.dueMinute}
+            durationHours={task.durationHours}
+            durationMinutes={task.durationMinutes}
           />
         ))
       ) : (
