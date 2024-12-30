@@ -18,7 +18,6 @@ function App() {
     axios
       .get("http://localhost:500/api/user", { withCredentials: true })
       .then((response) => {
-        console.log("here", response.data.user);
         if (response.data.user) {
           SetIsLoggedIn(true);
           setUser(response.data.user);

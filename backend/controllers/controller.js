@@ -97,11 +97,43 @@ export const getUser = (req, res) => {
 export const chat = async (req, res) => {
   try {
     const { prompt } = req.body;
+    console.log(prompt);
 
     const systemMessage = {
       role: "system",
-      content:
-        "You are a task scheduler. You will be given all the tasks of a current day with their expected durations and expected due hour and due minute.   Given a task name, deadline, and expected duration, calculate the optimal time to start the task, ensuring it fits before the deadline.",
+      content: `
+      You are a task scheduler. You will be provided with a list of existing tasks, including their start times, durations, and due times. Your goal is to find the optimal start time for a new task.
+    
+      Your response should only include the optimal start time in 24-hour format (Hour:Minute) with no spaces. You should schedule tasks to avoid overlaps if possible. However, if avoiding overlaps is not feasible, schedule the new task earlier or later to minimize conflicts while still respecting the task's due time and duration.
+    
+      Here’s how you should handle the input:
+      - Attempt to schedule the new task without conflicts, ensuring it does not overlap with any existing tasks.
+Overlap occurs when the new task's start time and duration result in an end time that falls within the duration of an existing task, or if the new task's start time itself falls within the duration of another task.
+      - Overlap occurs when the new task's start time and duration result in an end time that falls within the duration of an existing task, or if the new task's start time itself falls within the duration of another task.
+      - Consider two existing tasks: 
+          1. Task one starts at 9:30 and has a duration of 2 hours 30 minutes. The end time for task one is calculated as 9:30 + 2:30 = 12:00.
+          2. Task two starts at 11:00 and has a duration of 2 hours 30 minutes. The end time for task two is calculated as 11:00 + 2:30 = 13:30.
+          To check for overlaps:
+            - Task two’s start time (11:00) falls within the duration of task one, which is 9:30 to 12:00.
+            - Similarly, task one’s end time (12:00) falls within the duration of task two, which is 11:00 to 13:30.
+      Thus, the two tasks overlap, as the time intervals 9:30 to 12:00 and 11:00 to 13:30 intersect.
+When scheduling a new task, ensure that its start time and end time do not fall within the time interval of any existing task.
+      - If no conflict-free times are available, prioritize scheduling it earlier or later, minimizing the overlap and ensuring the task still fits within its due time and duration.
+    
+      Example:
+      - Task 1: Start at 10:00, Duration: 2 hours
+      - Task 2: Start at 12:00, Duration: 3 hours 40 minutes
+      - Task 3: Start at 15:20, Duration: 3 hours 20 minutes
+    
+      If a new task must be scheduled but there is no conflict-free slot, adjust its start time earlier or later to ensure it fits best with minimal disruption.
+    
+      Remember:
+      - Return **only** the time in the format Hour:Minute.
+      - Minimize overlap if avoiding it completely is not possible.
+      - Ensure the task still respects its due time and duration.
+    
+      You are not allowed to return anything other than the optimal start time.
+      `,
     };
 
     const userMessage = {
@@ -132,8 +164,16 @@ export const chat = async (req, res) => {
 
 export const createTask = async (req, res) => {
   try {
-    const { name, dueDay, dueHour, dueMinute, durationHours, durationMinutes } =
-      req.body;
+    const {
+      name,
+      dueDay,
+      dueHour,
+      dueMinute,
+      durationHours,
+      durationMinutes,
+      startHour,
+      startMinutes,
+    } = req.body;
     if (req.session) {
       const newTask = await new Task({
         name,
@@ -142,6 +182,8 @@ export const createTask = async (req, res) => {
         dueMinute,
         durationHours,
         durationMinutes,
+        startHour,
+        startMinutes,
         done: false,
         user: req.session.user.id,
       });

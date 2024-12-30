@@ -9,6 +9,8 @@ const taskSchema = new mongoose.Schema({
   durationMinutes: Number,
   done: mongoose.SchemaTypes.Boolean,
   user: mongoose.SchemaTypes.ObjectId,
+  startHour: Number,
+  startMinutes: Number,
 });
 
 const Task = mongoose.model("Task", taskSchema);

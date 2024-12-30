@@ -14,35 +14,76 @@ export const TasksWithCalendar = () => {
   const numDays = new Date(currentYear, currentMonth + 1, 0).getDate();
   const [day, setDay] = useState(currentDate.getDate());
   const [tasks, setTasks] = useState([]); //store tasks of selected date
-
+  const [DesiredTasks, setDesiredTasks] = useState(null); //store the tasks of the day the created task is due
+  const [aiTime, setAiTime] = useState({
+    Hours: null,
+    Minutes: null,
+  });
   //given a day, this function fetches the tasks for that day
+  const fetchTasks = async (day, updateStateCallback) => {
+    axios
+      .post(
+        "http://localhost:500/api/task/day",
+        { day },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        updateStateCallback(response.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
-    const fetchTasks = async () => {
+    fetchTasks(day, setTasks);
+  }, [day]); //run when day changes
+
+  useEffect(() => {
+    if (aiTime.Hours && aiTime.Minutes) {
+      createTask();
+    }
+  }, [aiTime]); // This effect will run every time aiTime changes
+
+  useEffect(() => {
+    if (DesiredTasks) {
+      console.log("Desired tasks: ", DesiredTasks);
       axios
         .post(
-          "http://localhost:500/api/task/day",
-          { day },
+          "http://localhost:500/api/chat", //JSON.stringify(DesiredTasks)
+          {
+            prompt: `Here are the tasks for today: ${JSON.stringify(
+              DesiredTasks
+            )}. 
+               The task to be added is: ${JSON.stringify({
+                 name: data.name,
+                 dueDay: data.dueDay,
+                 dueHour: data.dueHour,
+                 dueMinute: data.dueMinute,
+                 durationHours: data.durationHours,
+                 durationMinutes: data.durationMinutes,
+               })}.`,
+          },
           { withCredentials: true }
         )
-        .then((response) => {
-          setTasks(response.data.data);
-        })
-        .catch((err) => {
-          console.log(err);
+        .then((result) => {
+          try {
+            console.log("ChatGPT called", result);
+            const timeString = result.data.data;
+            const [resultHours, resultMinutes] = timeString.split(":");
+            setAiTime({
+              Hours: resultHours,
+              Minutes: resultMinutes,
+            });
+          } catch (error) {
+            console.log(error);
+          }
         });
-    };
+    }
+  }, [DesiredTasks]);
 
-    fetchTasks();
-  }, [day]); //run when either day or tasks changes
-
-  const onPageChange = (event) => {
-    setFirst(event.first);
-    setRows(event.rows);
-    setDay((event.first + 10) / 10); // the selected day of the month
-    setWeekday(dates[first / 10].dayOfWeek); //the selected weekday
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const createTask = () => {
+    //create task
     axios
       .post(
         "http://localhost:500/api/task/create",
@@ -53,27 +94,14 @@ export const TasksWithCalendar = () => {
           dueMinute: data.dueMinute,
           durationHours: data.durationHours,
           durationMinutes: data.durationMinutes,
+          startHour: aiTime.Hours,
+          startMinutes: aiTime.Minutes,
         },
         { withCredentials: true }
       )
       .then((result) => {
         if (result.status == 201) {
           console.log("Task created successfully");
-          if (data.dueDay == day) {
-            //immediately rerender if the paginator is on the page where the task should render
-            setTasks([
-              ...tasks,
-              {
-                _id: result.data.data,
-                name: data.name,
-                dueDay: data.dueDay,
-                dueHour: data.dueHour,
-                dueMinute: data.dueMinute,
-                durationHours: data.durationHours,
-                durationMinutes: data.durationMinutes,
-              },
-            ]);
-          }
           //reset the form once submitted
           setData({
             name: "",
@@ -89,6 +117,17 @@ export const TasksWithCalendar = () => {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setDay((event.first + 10) / 10); // the selected day of the month
+    setWeekday(dates[first / 10].dayOfWeek); //the selected weekday
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetchTasks(data.dueDay, setDesiredTasks);
   };
 
   const hours = [
@@ -139,8 +178,9 @@ export const TasksWithCalendar = () => {
           onPageChange={onPageChange}
         />
       </div>
-      {console.log(tasks)}
-      {tasks ? (
+      {tasks.length === 0 ? (
+        <p>No tasks yet 😔</p>
+      ) : (
         tasks.map((task) => (
           <TaskInfo
             key={task._id}
@@ -153,8 +193,6 @@ export const TasksWithCalendar = () => {
             durationMinutes={task.durationMinutes}
           />
         ))
-      ) : (
-        <h1>No tasks yet</h1>
       )}
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
