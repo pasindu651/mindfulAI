@@ -119,6 +119,23 @@ export const TasksWithCalendar = () => {
       });
   };
 
+  const handleDelete = async (id) => {
+    axios
+      .delete(`http://localhost:500/api/task/${id}`)
+      .then((result) => {
+        if (result.status == 200) {
+          console.log("Task deleted successfully");
+          const taskRemoved = tasks.filter((task) => task._id !== id);
+
+          // Update the state with the filtered tasks array
+          setTasks(taskRemoved);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
@@ -182,16 +199,25 @@ export const TasksWithCalendar = () => {
         <p>No tasks yet 😔</p>
       ) : (
         tasks.map((task) => (
-          <TaskInfo
-            key={task._id}
-            id={task._id}
-            name={task.name}
-            dueDay={task.dueDay}
-            dueHour={task.dueHour}
-            dueMinute={task.dueMinute}
-            durationHours={task.durationHours}
-            durationMinutes={task.durationMinutes}
-          />
+          <div key={task._id}>
+            <h3>{task.name}</h3>
+            <p>
+              Due on Day {task.dueDay} at {task.dueHour}:{task.dueMinute}
+              Completion time: {task.durationHours}:{task.durationMinutes}
+            </p>
+            <Button
+              label="Mark Done"
+              icon="pi pi-check"
+              size="small"
+              onClick={() => handleMarkDone(task.id)}
+            />
+            <Button
+              label="Delete"
+              icon="pi pi-trash"
+              size="small"
+              onClick={() => handleDelete(task._id)}
+            />
+          </div>
         ))
       )}
       <div className="flex justify-content-center">

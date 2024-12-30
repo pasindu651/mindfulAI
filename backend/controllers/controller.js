@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/userModel.js";
 import dotenv from "dotenv";
 import Task from "../models/taskModel.js";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -210,5 +211,19 @@ export const getDayTask = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ success: false, message: error });
+  }
+};
+
+export const deleteTask = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: "Invalid Task Id" });
+  }
+  try {
+    await Task.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: "Task deleted" });
+  } catch (error) {
+    console.log("Error in deleting products", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
