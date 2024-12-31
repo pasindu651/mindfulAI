@@ -12,9 +12,11 @@ export default function Home() {
   console.log(user);
   return (
     <>
-      <div className="flex justify-content-center">{`Hello ${
-        user ? user.firstName : ""
-      }`}</div>
+      <div className="flex justify-content-center align-items-center m-3">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
+          {`Hello ${user ? user.firstName : ""}`}
+        </h2>
+      </div>
 
       {IsLoggedIn && <TasksWithCalendar />}
     </>

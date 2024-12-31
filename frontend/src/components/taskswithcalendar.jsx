@@ -96,7 +96,7 @@ export const TasksWithCalendar = () => {
       console.log("Desired tasks: ", DesiredTasks);
       axios
         .post(
-          "http://localhost:500/api/chat", //JSON.stringify(DesiredTasks)
+          "http://localhost:500/api/chat",
           {
             prompt: `Here are the tasks for today: ${JSON.stringify(
               DesiredTasks
@@ -106,6 +106,7 @@ export const TasksWithCalendar = () => {
                  dueDay: data.dueDay,
                  dueHour: data.dueHour,
                  dueMinute: data.dueMinute,
+                 suffix: data.suffix,
                  durationHours: data.durationHours,
                  durationMinutes: data.durationMinutes,
                })}.`,
@@ -138,6 +139,7 @@ export const TasksWithCalendar = () => {
           dueDay: data.dueDay,
           dueHour: data.dueHour,
           dueMinute: data.dueMinute,
+          suffix: data.suffix,
           durationHours: data.durationHours,
           durationMinutes: data.durationMinutes,
           startHour: aiTime.Hours,
@@ -158,6 +160,7 @@ export const TasksWithCalendar = () => {
                 dueDay: data.dueDay,
                 dueHour: data.dueHour,
                 dueMinute: data.dueMinute,
+                suffix: data.suffix,
                 durationHours: data.durationHours,
                 durationMinutes: data.durationMinutes,
                 startHour: aiTime.Hours,
@@ -237,6 +240,7 @@ export const TasksWithCalendar = () => {
     dueDay: null,
     dueHour: null,
     dueMinute: null,
+    suffix: null,
     durationHours: null,
     durationMinutes: null,
   });
@@ -259,7 +263,9 @@ export const TasksWithCalendar = () => {
         />
       </div>
       {tasks.length === 0 ? (
-        <h3 className="flex justify-content-center">No tasks yet 😔</h3>
+        <h3 className="flex justify-content-center text-gray-400">
+          No tasks yet 😔
+        </h3>
       ) : (
         tasks
           .filter((task) => task.done === false) //show tasks that are not completed by default
@@ -363,7 +369,7 @@ export const TasksWithCalendar = () => {
               <Dropdown
                 value={data.dueHour}
                 onChange={(e) => setData({ ...data, dueHour: e.value })}
-                options={hours}
+                options={hours.slice(0, 12)} //get hours 1-12
                 placeholder="Hours"
                 className="w-full md:w-8rem"
               />
@@ -374,6 +380,15 @@ export const TasksWithCalendar = () => {
                 onChange={(e) => setData({ ...data, dueMinute: e.value })}
                 options={minutes}
                 placeholder="Minutes"
+                className="w-full md:w-8rem"
+              />
+            </div>
+            <div className="flex flex-column gap-2">
+              <Dropdown
+                value={data.suffix}
+                onChange={(e) => setData({ ...data, suffix: e.value })}
+                options={["AM", "PM"]} //get hours 1-12
+                placeholder="Time of Day"
                 className="w-full md:w-8rem"
               />
             </div>

@@ -103,7 +103,7 @@ export const chat = async (req, res) => {
     const systemMessage = {
       role: "system",
       content: `
-      You are a task scheduler. You will be provided with a list of existing tasks, including their start times, durations, and due times. Your goal is to find the optimal start time for a new task.
+      You are a task scheduler. You will be provided with a list of existing tasks, including their start times, durations, and due times with the suffix AM/PM. Your goal is to find the optimal start time for a new task.
     
       Your response should only include the optimal start time in 24-hour format (Hour:Minute) with no spaces. You should schedule tasks to avoid overlaps if possible. However, if avoiding overlaps is not feasible, schedule the new task earlier or later to minimize conflicts while still respecting the task's due time and duration.
     
@@ -171,6 +171,7 @@ export const createTask = async (req, res) => {
       dueDay,
       dueHour,
       dueMinute,
+      suffix,
       durationHours,
       durationMinutes,
       startHour,
@@ -182,6 +183,7 @@ export const createTask = async (req, res) => {
         dueDay,
         dueHour,
         dueMinute,
+        suffix,
         durationHours,
         durationMinutes,
         startHour,

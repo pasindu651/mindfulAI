@@ -5,6 +5,7 @@ const taskSchema = new mongoose.Schema({
   dueDay: Number,
   dueHour: Number,
   dueMinute: Number,
+  suffix: String,
   durationHours: Number,
   durationMinutes: Number,
   done: mongoose.SchemaTypes.Boolean,

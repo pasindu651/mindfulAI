@@ -7,22 +7,30 @@ import { Panel } from "primereact/Panel";
 import axios from "axios";
 
 //function to add duration time to start time and deal with overflow
-function addTime(startHour, startMinute, durationHour, durationMinute) {
-  let startTotalMinutes = startHour * 60 + startMinute;
-  let durationTotalMinutes = durationHour * 60 + durationMinute;
+function addTime(starthour, startminute, durationhours, durationminutes) {
+  starthour = Number(starthour);
+  startminute = Number(startminute);
+  durationhours = Number(durationhours);
+  durationminutes = Number(durationminutes);
 
-  let newTotalMinutes = startTotalMinutes + durationTotalMinutes;
+  let newMinute = startminute + durationminutes;
+  let newHour = starthour + durationhours;
 
-  let newHour = Math.floor(newTotalMinutes / 60) % 24;
-  let newMinute = newTotalMinutes % 60;
+  if (newMinute >= 60) {
+    newMinute -= 60;
+    newHour += 1;
+  }
+
+  if (newHour >= 24) {
+    newHour -= 24;
+  }
 
   return { hour: newHour, minute: newMinute };
 }
 
 function convertTo12Hour(hour, minute) {
-  if (minute === undefined || hour === undefined) {
-    return ""; // or some default value
-  }
+  hour = Number(hour);
+  minute = Number(minute);
   let newHour = hour % 12 || 12;
   let suffix = hour < 12 ? "AM" : "PM";
   return `${newHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
@@ -37,6 +45,7 @@ export const TaskInfo = ({ task, buttons }) => {
             {convertTo12Hour(task.startHour, task.startMinutes) +
               " to " +
               (() => {
+                console.log("hi", task);
                 const endTime = addTime(
                   task.startHour,
                   task.startMinutes,
@@ -49,7 +58,7 @@ export const TaskInfo = ({ task, buttons }) => {
               `(${task.durationHours} hours and ${task.durationMinutes} minutes)`}
           </p>
           <p style={{ marginTop: "1rem" }}>
-            Due at: {convertTo12Hour(task.dueHour, task.dueMinute)}
+            Due at: {task.dueHour}:{task.dueMinute} {task.suffix}
           </p>
         </Panel>
         <div className="flex flex-row md:flex-column gap-2">{buttons}</div>
