@@ -25,29 +25,49 @@ const fetchTasks = async (day, updateStateCallback) => {
     });
 };
 
-//function to add duration time to start time and deal with overflow
-function addTime(startHour, startMinute, durationHour, durationMinute) {
-  let startTotalMinutes = startHour * 60 + startMinute;
-  let durationTotalMinutes = durationHour * 60 + durationMinute;
-
-  let newTotalMinutes = startTotalMinutes + durationTotalMinutes;
-
-  let newHour = Math.floor(newTotalMinutes / 60) % 24;
-  let newMinute = newTotalMinutes % 60;
-
-  return { hour: newHour, minute: newMinute };
-}
-
-function convertTo12Hour(hour, minute) {
-  if (minute === undefined || hour === undefined) {
-    return ""; // or some default value
-  }
-  let newHour = hour % 12 || 12;
-  let suffix = hour < 12 ? "AM" : "PM";
-  return `${newHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
-}
-
 export const TasksWithCalendar = () => {
+  const handleDelete = async (id) => {
+    axios
+      .delete(`http://localhost:500/api/task/${id}`)
+      .then((result) => {
+        if (result.status == 200) {
+          console.log("Task deleted successfully");
+          const taskRemoved = tasks.filter((task) => task._id !== id);
+
+          // Update the state with the tasks array excluding the deleted task
+          setTasks(taskRemoved);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleMarkDone = async (id) => {
+    axios
+      .put(
+        `http://localhost:500/api/task/${id}`,
+        { done: true },
+        { withCredentials: true }
+      )
+      .then((result) => {
+        if (result.status == 200) {
+          console.log("Task updated successfully");
+          //update the task array so that the task that was updated has its 'done' changed to true
+          let updatedTasks = tasks.map((task) => {
+            if (task._id === id) {
+              //if a task with the id is found, mark it as done
+              return { ...task, done: true }; //immutable way of changing variable
+            }
+            return task;
+          });
+          setTasks(updatedTasks);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -164,49 +184,6 @@ export const TasksWithCalendar = () => {
       });
   };
 
-  const handleDelete = async (id) => {
-    axios
-      .delete(`http://localhost:500/api/task/${id}`)
-      .then((result) => {
-        if (result.status == 200) {
-          console.log("Task deleted successfully");
-          const taskRemoved = tasks.filter((task) => task._id !== id);
-
-          // Update the state with the tasks array excluding the deleted task
-          setTasks(taskRemoved);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleMarkDone = async (id) => {
-    axios
-      .put(
-        `http://localhost:500/api/task/${id}`,
-        { done: true },
-        { withCredentials: true }
-      )
-      .then((result) => {
-        if (result.status == 200) {
-          console.log("Task updated successfully");
-          //update the task array so that the task that was updated has its 'done' changed to true
-          let updatedTasks = tasks.map((task) => {
-            if (task._id === id) {
-              //if a task with the id is found, mark it as done
-              return { ...task, done: true }; //immutable way of changing variable
-            }
-            return task;
-          });
-          setTasks(updatedTasks);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
@@ -287,42 +264,18 @@ export const TasksWithCalendar = () => {
         tasks
           .filter((task) => task.done === false) //show tasks that are not completed by default
           .map((task) => (
-            <div
+            <TaskInfo
               key={task._id}
-              className="flex flex-column md:flex-row align-items-center justify-content-between gap-3 my-3 p-3 border-round shadow-2"
-            >
-              <Panel
-                header={task.name}
-                className="flex-grow-1 w-full md:w-auto"
-              >
-                <p className="m-0 text-center md:text-left">
-                  {convertTo12Hour(task.startHour, task.startMinutes) +
-                    " to " +
-                    (() => {
-                      const endTime = addTime(
-                        task.startHour,
-                        task.startMinutes,
-                        task.durationHours,
-                        task.durationMinutes
-                      );
-                      console.log(endTime);
-                      return convertTo12Hour(endTime.hour, endTime.minute);
-                    })() +
-                    `(${task.durationHours} hours and ${task.durationMinutes} minutes)`}
-                </p>
-                <p style={{ marginTop: "1rem" }}>
-                  Due at: {convertTo12Hour(task.dueHour, task.dueMinute)}
-                </p>
-              </Panel>
-              <div className="flex flex-row md:flex-column gap-2">
+              task={task}
+              buttons={
                 <Button
                   label="Mark Done"
                   icon="pi pi-check"
                   size="small"
                   onClick={() => handleMarkDone(task._id)}
                 />
-              </div>
-            </div>
+              }
+            />
           ))
       )}
       <Accordion activeIndex={0}>
@@ -330,42 +283,18 @@ export const TasksWithCalendar = () => {
           {tasks
             .filter((task) => task.done === true) //show only completed tasks
             .map((task) => (
-              <div
+              <TaskInfo
                 key={task._id}
-                className="flex flex-column md:flex-row align-items-center justify-content-between gap-3 my-3 p-3 border-round shadow-2"
-              >
-                <Panel
-                  header={task.name}
-                  className="flex-grow-1 w-full md:w-auto"
-                >
-                  <p className="m-0 text-center md:text-left">
-                    {convertTo12Hour(task.startHour, task.startMinutes) +
-                      " to " +
-                      (() => {
-                        const endTime = addTime(
-                          task.startHour,
-                          task.startMinutes,
-                          task.durationHours,
-                          task.durationMinutes
-                        );
-                        console.log(endTime);
-                        return convertTo12Hour(endTime.hour, endTime.minute);
-                      })() +
-                      `(${task.durationHours} hours and ${task.durationMinutes} minutes)`}
-                  </p>
-                  <p style={{ marginTop: "1rem" }}>
-                    Due at: {convertTo12Hour(task.dueHour, task.dueMinute)}
-                  </p>
-                </Panel>
-                <div className="flex flex-row md:flex-column gap-2">
+                task={task}
+                buttons={
                   <Button
                     label="Delete"
                     icon="pi pi-trash"
                     size="small"
                     onClick={() => handleDelete(task._id)}
                   />
-                </div>
-              </div>
+                }
+              />
             ))}
         </AccordionTab>
       </Accordion>{" "}
