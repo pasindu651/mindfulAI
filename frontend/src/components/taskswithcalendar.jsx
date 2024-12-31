@@ -7,6 +7,7 @@ import { TaskInfo } from "./taskInfo";
 import { Paginator } from "primereact/paginator";
 import { Card } from "primereact/Card";
 import { Panel } from "primereact/Panel";
+import { Accordion, AccordionTab } from "primereact/Accordion";
 
 //given a day, this function fetches the tasks for that day
 const fetchTasks = async (day, updateStateCallback) => {
@@ -19,23 +20,30 @@ const fetchTasks = async (day, updateStateCallback) => {
     .then((response) => {
       updateStateCallback(response.data.data);
     })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.log(error);
     });
 };
 
-//function to handle overflowing minutes when adding duration to time
-function addTime(hour, minute, durationHours, durationMinutes) {
-  const totalMinutes = minute + durationMinutes;
-  const extraHours = Math.floor(totalMinutes / 60);
-  const newMinutes = totalMinutes % 60;
-  const newHours = (hour + durationHours + extraHours) % 24;
-  return { hour: newHours, minute: newMinutes };
+//function to add duration time to start time and deal with overflow
+function addTime(startHour, startMinute, durationHour, durationMinute) {
+  let startTotalMinutes = startHour * 60 + startMinute;
+  let durationTotalMinutes = durationHour * 60 + durationMinute;
+
+  let newTotalMinutes = startTotalMinutes + durationTotalMinutes;
+
+  let newHour = Math.floor(newTotalMinutes / 60) % 24;
+  let newMinute = newTotalMinutes % 60;
+
+  return { hour: newHour, minute: newMinute };
 }
 
 function convertTo12Hour(hour, minute) {
-  const newHour = hour % 12 || 12;
-  const suffix = hour < 12 ? "AM" : "PM";
+  if (minute === undefined || hour === undefined) {
+    return ""; // or some default value
+  }
+  let newHour = hour % 12 || 12;
+  let suffix = hour < 12 ? "AM" : "PM";
   return `${newHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
 }
 
@@ -132,8 +140,8 @@ export const TasksWithCalendar = () => {
                 dueMinute: data.dueMinute,
                 durationHours: data.durationHours,
                 durationMinutes: data.durationMinutes,
-                startMinutes: data.startMinutes,
-                startHour: data.startHour,
+                startHour: aiTime.Hours,
+                startMinutes: aiTime.Minutes,
               },
             ]);
           }
@@ -172,7 +180,31 @@ export const TasksWithCalendar = () => {
       });
   };
 
-  const handleMarkDone = async (id) => {};
+  const handleMarkDone = async (id) => {
+    axios
+      .put(
+        `http://localhost:500/api/task/${id}`,
+        { done: true },
+        { withCredentials: true }
+      )
+      .then((result) => {
+        if (result.status == 200) {
+          console.log("Task updated successfully");
+          //update the task array so that the task that was updated has its 'done' changed to true
+          let updatedTasks = tasks.map((task) => {
+            if (task._id === id) {
+              //if a task with the id is found, mark it as done
+              return { ...task, done: true }; //immutable way of changing variable
+            }
+            return task;
+          });
+          setTasks(updatedTasks);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const onPageChange = (event) => {
     setFirst(event.first);
@@ -293,6 +325,25 @@ export const TasksWithCalendar = () => {
           </div>
         ))
       )}
+      <Accordion activeIndex={null}>
+        <AccordionTab header="Completed">
+          {tasks
+            .filter((task) => task.done === true)
+            .map((task) => (
+              <div key={task._id}>{task.name}</div>
+            ))}
+
+          <p className="m-0">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+        </AccordionTab>
+      </Accordion>{" "}
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
           <div className="flex align-items-center justify-content-center m-2">

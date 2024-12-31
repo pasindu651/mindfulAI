@@ -164,6 +164,7 @@ When scheduling a new task, ensure that its start time and end time do not fall 
 };
 
 export const createTask = async (req, res) => {
+  console.log(req.body);
   try {
     const {
       name,
@@ -224,6 +225,21 @@ export const deleteTask = async (req, res) => {
     res.status(200).json({ success: true, message: "Task deleted" });
   } catch (error) {
     console.log("Error in deleting products", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const updateTask = async (req, res) => {
+  const { id } = req.params;
+  const task = req.body;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: "Invalid Task Id" });
+  }
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(id, task, { new: true });
+    res.status(200).json({ success: true, data: updateTask });
+  } catch (error) {
+    console.log("Error in updating products", error.message);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
