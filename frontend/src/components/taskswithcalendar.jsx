@@ -142,6 +142,7 @@ export const TasksWithCalendar = () => {
                 durationMinutes: data.durationMinutes,
                 startHour: aiTime.Hours,
                 startMinutes: aiTime.Minutes,
+                done: false,
               },
             ]);
           }
@@ -283,65 +284,89 @@ export const TasksWithCalendar = () => {
       {tasks.length === 0 ? (
         <h3 className="flex justify-content-center">No tasks yet 😔</h3>
       ) : (
-        tasks.map((task) => (
-          <div
-            key={task._id}
-            className="flex flex-column md:flex-row align-items-center justify-content-between gap-3 my-3 p-3 border-round shadow-2"
-          >
-            <Panel header={task.name} className="flex-grow-1 w-full md:w-auto">
-              <p className="m-0 text-center md:text-left">
-                {convertTo12Hour(task.startHour, task.startMinutes) +
-                  " to " +
-                  (() => {
-                    const endTime = addTime(
-                      task.startHour,
-                      task.startMinutes,
-                      task.durationHours,
-                      task.durationMinutes
-                    );
-                    console.log(endTime);
-                    return convertTo12Hour(endTime.hour, endTime.minute);
-                  })() +
-                  `(${task.durationHours} hours and ${task.durationMinutes} minutes)`}
-              </p>
-              <p style={{ marginTop: "1rem" }}>
-                Due at: {convertTo12Hour(task.dueHour, task.dueMinute)}
-              </p>
-            </Panel>
-            <div className="flex flex-row md:flex-column gap-2">
-              <Button
-                label="Mark Done"
-                icon="pi pi-check"
-                size="small"
-                onClick={() => handleMarkDone(task._id)}
-              />
-              <Button
-                label="Delete"
-                icon="pi pi-trash"
-                size="small"
-                onClick={() => handleDelete(task._id)}
-              />
+        tasks
+          .filter((task) => task.done === false) //show tasks that are not completed by default
+          .map((task) => (
+            <div
+              key={task._id}
+              className="flex flex-column md:flex-row align-items-center justify-content-between gap-3 my-3 p-3 border-round shadow-2"
+            >
+              <Panel
+                header={task.name}
+                className="flex-grow-1 w-full md:w-auto"
+              >
+                <p className="m-0 text-center md:text-left">
+                  {convertTo12Hour(task.startHour, task.startMinutes) +
+                    " to " +
+                    (() => {
+                      const endTime = addTime(
+                        task.startHour,
+                        task.startMinutes,
+                        task.durationHours,
+                        task.durationMinutes
+                      );
+                      console.log(endTime);
+                      return convertTo12Hour(endTime.hour, endTime.minute);
+                    })() +
+                    `(${task.durationHours} hours and ${task.durationMinutes} minutes)`}
+                </p>
+                <p style={{ marginTop: "1rem" }}>
+                  Due at: {convertTo12Hour(task.dueHour, task.dueMinute)}
+                </p>
+              </Panel>
+              <div className="flex flex-row md:flex-column gap-2">
+                <Button
+                  label="Mark Done"
+                  icon="pi pi-check"
+                  size="small"
+                  onClick={() => handleMarkDone(task._id)}
+                />
+              </div>
             </div>
-          </div>
-        ))
+          ))
       )}
-      <Accordion activeIndex={null}>
+      <Accordion activeIndex={0}>
         <AccordionTab header="Completed">
           {tasks
-            .filter((task) => task.done === true)
+            .filter((task) => task.done === true) //show only completed tasks
             .map((task) => (
-              <div key={task._id}>{task.name}</div>
+              <div
+                key={task._id}
+                className="flex flex-column md:flex-row align-items-center justify-content-between gap-3 my-3 p-3 border-round shadow-2"
+              >
+                <Panel
+                  header={task.name}
+                  className="flex-grow-1 w-full md:w-auto"
+                >
+                  <p className="m-0 text-center md:text-left">
+                    {convertTo12Hour(task.startHour, task.startMinutes) +
+                      " to " +
+                      (() => {
+                        const endTime = addTime(
+                          task.startHour,
+                          task.startMinutes,
+                          task.durationHours,
+                          task.durationMinutes
+                        );
+                        console.log(endTime);
+                        return convertTo12Hour(endTime.hour, endTime.minute);
+                      })() +
+                      `(${task.durationHours} hours and ${task.durationMinutes} minutes)`}
+                  </p>
+                  <p style={{ marginTop: "1rem" }}>
+                    Due at: {convertTo12Hour(task.dueHour, task.dueMinute)}
+                  </p>
+                </Panel>
+                <div className="flex flex-row md:flex-column gap-2">
+                  <Button
+                    label="Delete"
+                    icon="pi pi-trash"
+                    size="small"
+                    onClick={() => handleDelete(task._id)}
+                  />
+                </div>
+              </div>
             ))}
-
-          <p className="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
         </AccordionTab>
       </Accordion>{" "}
       <div className="flex justify-content-center">
