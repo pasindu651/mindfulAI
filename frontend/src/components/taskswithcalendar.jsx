@@ -5,6 +5,39 @@ import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
 import { TaskInfo } from "./taskInfo";
 import { Paginator } from "primereact/paginator";
+import { Card } from "primereact/Card";
+import { Panel } from "primereact/Panel";
+
+//given a day, this function fetches the tasks for that day
+const fetchTasks = async (day, updateStateCallback) => {
+  axios
+    .post(
+      "http://localhost:500/api/task/day",
+      { day },
+      { withCredentials: true }
+    )
+    .then((response) => {
+      updateStateCallback(response.data.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+//function to handle overflowing minutes when adding duration to time
+function addTime(hour, minute, durationHours, durationMinutes) {
+  const totalMinutes = minute + durationMinutes;
+  const extraHours = Math.floor(totalMinutes / 60);
+  const newMinutes = totalMinutes % 60;
+  const newHours = (hour + durationHours + extraHours) % 24;
+  return { hour: newHours, minute: newMinutes };
+}
+
+function convertTo12Hour(hour, minute) {
+  const newHour = hour % 12 || 12;
+  const suffix = hour < 12 ? "AM" : "PM";
+  return `${newHour}:${minute.toString().padStart(2, "0")} ${suffix}`;
+}
 
 export const TasksWithCalendar = () => {
   const currentDate = new Date();
@@ -19,21 +52,6 @@ export const TasksWithCalendar = () => {
     Hours: null,
     Minutes: null,
   });
-  //given a day, this function fetches the tasks for that day
-  const fetchTasks = async (day, updateStateCallback) => {
-    axios
-      .post(
-        "http://localhost:500/api/task/day",
-        { day },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        updateStateCallback(response.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   useEffect(() => {
     fetchTasks(day, setTasks);
@@ -102,6 +120,24 @@ export const TasksWithCalendar = () => {
       .then((result) => {
         if (result.status == 201) {
           console.log("Task created successfully");
+          if (data.dueDay == day) {
+            //immediately rerender if the paginator is on the page where the task should be added
+            setTasks([
+              ...tasks,
+              {
+                _id: result.data.data,
+                name: data.name,
+                dueDay: data.dueDay,
+                dueHour: data.dueHour,
+                dueMinute: data.dueMinute,
+                durationHours: data.durationHours,
+                durationMinutes: data.durationMinutes,
+                startMinutes: data.startMinutes,
+                startHour: data.startHour,
+              },
+            ]);
+          }
+
           //reset the form once submitted
           setData({
             name: "",
@@ -127,7 +163,7 @@ export const TasksWithCalendar = () => {
           console.log("Task deleted successfully");
           const taskRemoved = tasks.filter((task) => task._id !== id);
 
-          // Update the state with the filtered tasks array
+          // Update the state with the tasks array excluding the deleted task
           setTasks(taskRemoved);
         }
       })
@@ -135,6 +171,8 @@ export const TasksWithCalendar = () => {
         console.log(error);
       });
   };
+
+  const handleMarkDone = async (id) => {};
 
   const onPageChange = (event) => {
     setFirst(event.first);
@@ -159,6 +197,20 @@ export const TasksWithCalendar = () => {
     "Thursday",
     "Friday",
     "Saturday",
+  ];
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   //array of all the days of the month
   const dates = Array.from({ length: numDays }, (_, i) => {
@@ -185,8 +237,9 @@ export const TasksWithCalendar = () => {
 
   return (
     <>
-      <h2>{dates[first / 10].dayOfWeek}</h2>
-      <h2>{day}</h2>
+      <h1 className="flex justify-content-center text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+        {dates[first / 10].dayOfWeek + " " + months[currentMonth] + " " + day}
+      </h1>
       <div className="card">
         <Paginator
           first={first}
@@ -196,34 +249,56 @@ export const TasksWithCalendar = () => {
         />
       </div>
       {tasks.length === 0 ? (
-        <p>No tasks yet 😔</p>
+        <h3 className="flex justify-content-center">No tasks yet 😔</h3>
       ) : (
         tasks.map((task) => (
-          <div key={task._id}>
-            <h3>{task.name}</h3>
-            <p>
-              Due on Day {task.dueDay} at {task.dueHour}:{task.dueMinute}
-              Completion time: {task.durationHours}:{task.durationMinutes}
-            </p>
-            <Button
-              label="Mark Done"
-              icon="pi pi-check"
-              size="small"
-              onClick={() => handleMarkDone(task.id)}
-            />
-            <Button
-              label="Delete"
-              icon="pi pi-trash"
-              size="small"
-              onClick={() => handleDelete(task._id)}
-            />
+          <div
+            key={task._id}
+            className="flex flex-column md:flex-row align-items-center justify-content-between gap-3 my-3 p-3 border-round shadow-2"
+          >
+            <Panel header={task.name} className="flex-grow-1 w-full md:w-auto">
+              <p className="m-0 text-center md:text-left">
+                {convertTo12Hour(task.startHour, task.startMinutes) +
+                  " to " +
+                  (() => {
+                    const endTime = addTime(
+                      task.startHour,
+                      task.startMinutes,
+                      task.durationHours,
+                      task.durationMinutes
+                    );
+                    console.log(endTime);
+                    return convertTo12Hour(endTime.hour, endTime.minute);
+                  })() +
+                  `(${task.durationHours} hours and ${task.durationMinutes} minutes)`}
+              </p>
+              <p style={{ marginTop: "1rem" }}>
+                Due at: {convertTo12Hour(task.dueHour, task.dueMinute)}
+              </p>
+            </Panel>
+            <div className="flex flex-row md:flex-column gap-2">
+              <Button
+                label="Mark Done"
+                icon="pi pi-check"
+                size="small"
+                onClick={() => handleMarkDone(task._id)}
+              />
+              <Button
+                label="Delete"
+                icon="pi pi-trash"
+                size="small"
+                onClick={() => handleDelete(task._id)}
+              />
+            </div>
           </div>
         ))
       )}
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
           <div className="flex align-items-center justify-content-center m-2">
-            <h1>Use AI</h1>
+            <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+              Create task with AI
+            </h1>
           </div>
           <div className="flex align-items-center justify-content-center m-2">
             <div className="flex flex-column align-items-center gap-2">

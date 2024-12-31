@@ -24,5 +24,11 @@ export const Logout = () => {
         console.log("Error logging out: ", err);
       });
   };
-  return <Button onClick={handleLogout}>Logout</Button>;
+  return (
+    <div>
+      <Button icon="pi pi-sign-out" onClick={handleLogout}>
+        Logout
+      </Button>
+    </div>
+  );
 };
