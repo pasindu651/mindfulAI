@@ -21,18 +21,19 @@ app.use(
 
 const MemoryStore = Memorystore(session);
 
+//configure session middleware
 app.use(
   session({
     store: new MemoryStore({
-      checkPeriod: 86400000, // Optional: Time interval (in ms) to check for expired sessions
+      checkPeriod: 86400000,
     }),
-    secret: process.env.SESSION_SECRET, // Your session secret
-    resave: false, // Don't resave session if it hasn't changed
-    saveUninitialized: false, // Don't create session until something is stored
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Ensure secure cookies in production
-      httpOnly: true, // Prevent access to cookies via JavaScript
-      maxAge: 3600000, // Session cookie expiration time (1 hour)
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 3600000,
     },
   })
 );
