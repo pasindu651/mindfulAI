@@ -35,6 +35,7 @@ export default function Login() {
               withCredentials: true,
             })
             .then((response) => {
+              console.log(response);
               if (response.data.user) {
                 setUser(response.data.user);
                 SetIsLoggedIn(true);
