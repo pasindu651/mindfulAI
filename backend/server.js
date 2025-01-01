@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -20,15 +20,14 @@ app.use(
 //configure session middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "125amd",
+    secret: process.env.SESSION_SECRET, // Use a strong secret for your app
     resave: false,
     saveUninitialized: true,
-    //create session collection in database
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-    }),
-    //cookie will last a day
-    cookie: { maxAge: 24 * 60 * 60 * 1000 },
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   })
 );
 
