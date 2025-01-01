@@ -4,6 +4,7 @@ import User from "../models/userModel.js";
 import dotenv from "dotenv";
 import Task from "../models/taskModel.js";
 import mongoose from "mongoose";
+import { useState } from "react";
 
 dotenv.config();
 
@@ -24,8 +25,6 @@ export const login = async (req, res) => {
           lastName: user.lastName,
           email: user.email,
         };
-        console.log(req.session);
-        console.log(req.headers.cookies);
         res.json({ success: true, message: "Success!" });
       } else {
         console.log("wrong password");
@@ -88,6 +87,8 @@ export const logout = async (req, res) => {
 };
 
 export const getUser = (req, res) => {
+  console.log("HI");
+  console.log("DEBUG IN getUser, request: " + JSON.stringify(req));
   //if the session is successfully created, send user information to frontend
   if (req.session.user) {
     res.json({ success: true, user: req.session.user });
