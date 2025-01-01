@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Logout } from "./logout";
 import { IsLoggedInContext } from "../App";
-import { Avatar } from "primereact/Avatar";
+import { Avatar } from "primereact/avatar";
 import { UserContext } from "../App";
 import { Button } from "primereact/button";
 import "primeflex/primeflex.css";
