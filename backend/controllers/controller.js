@@ -24,7 +24,7 @@ export const login = async (req, res) => {
           lastName: user.lastName,
           email: user.email,
         };
-        res.json({ success: true, message: "Success!" });
+        res.json({ success: true, message: req.session.user });
       } else {
         console.log("wrong password");
         res
