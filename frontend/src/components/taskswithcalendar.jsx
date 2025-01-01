@@ -3,7 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
-import { TaskInfo } from "./taskInfo";
+import { TaskInfo } from "./TaskInfo";
 import { Paginator } from "primereact/paginator";
 import { Card } from "primereact/card";
 import { Panel } from "primereact/panel";
