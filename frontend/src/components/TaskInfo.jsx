@@ -2,7 +2,7 @@ import React from "react";
 import "primeicons/primeicons.css";
 
 import { Button } from "primereact/button";
-import { Card } from "primereact/Card";
+import { Card } from "primereact/card";
 import { Panel } from "primereact/panel";
 import axios from "axios";
 

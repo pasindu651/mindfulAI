@@ -5,7 +5,7 @@ import { Dropdown } from "primereact/dropdown";
 import axios from "axios";
 import { TaskInfo } from "./taskInfo";
 import { Paginator } from "primereact/paginator";
-import { Card } from "primereact/Card";
+import { Card } from "primereact/card";
 import { Panel } from "primereact/panel";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { TaskForm } from "./TaskForm";
