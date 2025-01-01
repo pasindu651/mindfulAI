@@ -4,7 +4,6 @@ import User from "../models/userModel.js";
 import dotenv from "dotenv";
 import Task from "../models/taskModel.js";
 import mongoose from "mongoose";
-import { useState } from "react";
 
 dotenv.config();
 
