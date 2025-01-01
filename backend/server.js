@@ -40,12 +40,7 @@ app.use(
       mongoUrl: process.env.MONGO_URI,
     }),
     //cookie will last a day
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      secure: process.env.NODE_ENV === "production", // Only send cookie over HTTPS in production
-      httpOnly: true, // Prevent client-side access to the cookie
-      sameSite: "none", // Allow cross-origin requests (important for cross-domain cookies)
-    },
+    cookie: { maxAge: 24 * 60 * 60 * 1000 },
   })
 );
 
