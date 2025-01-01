@@ -25,7 +25,7 @@ export const login = async (req, res) => {
           email: user.email,
         };
         console.log(req.session);
-        console.log(req.cookies);
+        console.log(req.headers.cookies);
         res.json({ success: true, message: "Success!" });
       } else {
         console.log("wrong password");
