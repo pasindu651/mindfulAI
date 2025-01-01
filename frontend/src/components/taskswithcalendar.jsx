@@ -303,7 +303,7 @@ export const TasksWithCalendar = () => {
               />
             ))}
         </AccordionTab>
-      </Accordion>{" "}
+      </Accordion>
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
           <div className="flex align-items-center justify-content-center m-2">

@@ -5,6 +5,9 @@ import axios from "axios";
 import { UserContext } from "../App";
 import { IsLoggedInContext } from "../App";
 import { TasksWithCalendar } from "../components/taskswithcalendar";
+import { LandingPage } from "../components/LandingPage";
+import { PrimeReactContext } from "primereact/api";
+
 export default function Home() {
   const { user, setUser } = useContext(UserContext); // Access user from context
   const IsLoggedIn = useContext(IsLoggedInContext);
@@ -13,9 +16,13 @@ export default function Home() {
   return (
     <>
       <div className="flex justify-content-center align-items-center m-3">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
-          {`Hello ${user ? user.firstName : ""}`}
-        </h2>
+        {user ? (
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
+            Hello, {user.firstName}
+          </h2>
+        ) : (
+          <LandingPage />
+        )}
       </div>
 
       {IsLoggedIn && <TasksWithCalendar />}

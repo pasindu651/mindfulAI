@@ -5,9 +5,12 @@ import { Password } from "primereact/password";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { IsLoggedInContext, SetIsLoggedInContext, UserContext } from "../App";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const SetIsLoggedIn = useContext(SetIsLoggedInContext);
+  const IsLoggedIn = useContext(IsLoggedInContext);
+
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const handleSubmit = (e) => {
@@ -91,6 +94,19 @@ export default function Login() {
               Login
             </Button>
           </div>
+          {!IsLoggedIn && (
+            <div className="flex align-items-center justify-content-center h-4rem m-2">
+              <div className="flex flex-column gap-2">
+                <span
+                  className="p-text-primary cursor-pointer"
+                  style={{ textDecoration: "none" }}
+                  onClick={() => navigate("/register")} // Navigate to the register page
+                >
+                  Don't have an account? Create one!
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
