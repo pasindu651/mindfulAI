@@ -27,13 +27,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({
-      mongooseConnection,
-      collection: "sessions",
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
   })
