@@ -3,7 +3,7 @@ import "primeicons/primeicons.css";
 
 import { Button } from "primereact/button";
 import { Card } from "primereact/Card";
-import { Panel } from "primereact/Panel";
+import { Panel } from "primereact/panel";
 import axios from "axios";
 
 //function to add duration time to start time and deal with overflow

@@ -6,8 +6,8 @@ import axios from "axios";
 import { TaskInfo } from "./taskInfo";
 import { Paginator } from "primereact/paginator";
 import { Card } from "primereact/Card";
-import { Panel } from "primereact/Panel";
-import { Accordion, AccordionTab } from "primereact/Accordion";
+import { Panel } from "primereact/panel";
+import { Accordion, AccordionTab } from "primereact/accordion";
 import { TaskForm } from "./TaskForm";
 import { Toast } from "primereact/toast";
 
