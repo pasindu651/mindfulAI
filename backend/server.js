@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import cors from "cors";
 import session from "express-session";
-import MongoStore from "connect-mongo";
 import routes from "./routes/routes.js";
+import connectMongo from "connect-mongo";
 dotenv.config();
 
 const app = express();
@@ -17,16 +17,21 @@ app.use(
   })
 );
 
-//configure session middleware
+const MongoStore = connectMongo(session);
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET, // Use a strong secret
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongooseConnection: process.env.MONGO_URI, // Use the mongoose connection
+      collection: "sessions", // Custom collection for storing sessions
+    }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // Set secure cookies in production
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
   })
 );
