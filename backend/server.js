@@ -4,7 +4,7 @@ import { connectDB } from "./config/db.js";
 import cors from "cors";
 import session from "express-session";
 import routes from "./routes/routes.js";
-import connectMongo from "connect-mongo";
+import MongoStore from "connect-mongo";
 import mongoose, { mongo } from "mongoose";
 
 dotenv.config();
@@ -18,8 +18,6 @@ app.use(
     credentials: true,
   })
 );
-
-const MongoStore = new connectMongo(session);
 
 app.use(
   session({
