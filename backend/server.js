@@ -20,7 +20,6 @@ app.use(
 );
 
 const MongoStore = connectMongo(session);
-const mongooseConnection = mongoose.connection;
 
 app.use(
   session({
