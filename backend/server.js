@@ -21,7 +21,7 @@ app.use(
 //configure session middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "125amd",
+    secret: process.env.SESSION_SECRET || "651pmd",
     resave: false,
     saveUninitialized: true,
     //create session collection in database
