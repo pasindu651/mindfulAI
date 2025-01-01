@@ -26,7 +26,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({
-      mongoUrl: process.env.MONGO_URI, // Use the mongoose connection
+      mongooseConnection: mongoose.connection, // Use the mongoose connection
       collection: "sessions", // Custom collection for storing sessions
     }),
     cookie: {
