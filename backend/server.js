@@ -5,7 +5,7 @@ import cors from "cors";
 import session from "express-session";
 import routes from "./routes/routes.js";
 import connectMongo from "connect-mongo";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 dotenv.config();
 
 const app = express();
@@ -26,7 +26,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({
-      mongooseConnection: mongoose.connection, // Use the mongoose connection
+      mongooseUrl: process.env.MONGO_URI, // Use the mongoose connection
       collection: "sessions", // Custom collection for storing sessions
     }),
     cookie: {
