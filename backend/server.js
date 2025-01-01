@@ -17,7 +17,7 @@ app.use(
   })
 );
 
-const MongoStore = connectMongo(session);
+const MongoStore = new connectMongo(session);
 
 app.use(
   session({
