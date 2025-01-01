@@ -6,7 +6,6 @@ import session from "express-session";
 import routes from "./routes/routes.js";
 import connectMongo from "connect-mongo";
 import mongoose, { mongo } from "mongoose";
-import { MongoClient } from "mongodb";
 
 dotenv.config();
 
@@ -21,10 +20,7 @@ app.use(
 );
 
 const MongoStore = connectMongo(session);
-const clientPromise = MongoClient.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const mongooseConnection = mongoose.connection;
 
 app.use(
   session({
@@ -32,7 +28,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({
-      clientPromise,
+      mongooseConnection,
       collection: "sessions",
     }),
     cookie: {
