@@ -10,7 +10,9 @@ export const Logout = () => {
   const { setUser } = useContext(UserContext);
   const handleLogout = () => {
     axios
-      .post("http://localhost:500/api/logout", { withCredentials: true })
+      .post("https://mindfulai.onrender.com/api/logout", {
+        withCredentials: true,
+      })
       .then((response) => {
         if (response.status === 200) {
           document.cookie =

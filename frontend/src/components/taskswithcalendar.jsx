@@ -15,7 +15,7 @@ import { Toast } from "primereact/toast";
 const fetchTasks = async (day, updateStateCallback) => {
   axios
     .post(
-      "http://localhost:500/api/task/day",
+      "https://mindfulai.onrender.com/api/task/day",
       { day },
       { withCredentials: true }
     )
@@ -39,7 +39,7 @@ export const TasksWithCalendar = () => {
     //create task
     axios
       .post(
-        "http://localhost:500/api/task/create",
+        "https://mindfulai.onrender.com/api/task/create",
         {
           name: data.name,
           dueDay: data.dueDay,
@@ -105,7 +105,7 @@ export const TasksWithCalendar = () => {
 
   const handleDelete = async (id) => {
     axios
-      .delete(`http://localhost:500/api/task/${id}`)
+      .delete(`https://mindfulai.onrender.com/api/task/${id}`)
       .then((result) => {
         if (result.status == 200) {
           toast.current.show({
@@ -133,7 +133,7 @@ export const TasksWithCalendar = () => {
   const handleMarkDone = async (id) => {
     axios
       .put(
-        `http://localhost:500/api/task/${id}`,
+        `https://mindfulai.onrender.com/api/task/${id}`,
         { done: true },
         { withCredentials: true }
       )
@@ -193,7 +193,7 @@ export const TasksWithCalendar = () => {
       console.log("Desired tasks: ", DesiredTasks);
       axios
         .post(
-          "http://localhost:500/api/chat",
+          "https://mindfulai.onrender.com/api/chat",
           {
             prompt: `Here are the tasks for today: ${JSON.stringify(
               DesiredTasks

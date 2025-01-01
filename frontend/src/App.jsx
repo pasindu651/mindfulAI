@@ -16,7 +16,7 @@ function App() {
   const [user, setUser] = useState(null);
   useEffect(() => {
     axios
-      .get("http://localhost:500/api/user", { withCredentials: true })
+      .get("https://mindfulai.onrender.com/api/user", { withCredentials: true })
       .then((response) => {
         if (response.data.user) {
           SetIsLoggedIn(true);

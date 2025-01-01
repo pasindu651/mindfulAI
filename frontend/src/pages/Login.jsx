@@ -20,7 +20,7 @@ export default function Login() {
     e.preventDefault();
     axios
       .post(
-        "http://localhost:500/api/login",
+        "https://mindfulai.onrender.com/api/login",
         {
           email: data.email,
           password: data.password,
@@ -31,7 +31,7 @@ export default function Login() {
         console.log(result);
         if (result.data.success) {
           axios
-            .get("http://localhost:500/api/user", {
+            .get("https://mindfulai.onrender.com/api/user", {
               withCredentials: true,
             })
             .then((response) => {

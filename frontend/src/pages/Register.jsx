@@ -10,7 +10,7 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:500/api/register", {
+      .post("https://mindfulai.onrender.com/api/register", {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,

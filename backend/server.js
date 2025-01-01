@@ -10,11 +10,22 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-//configure CORS
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:5173", // Local development
+  "https://enchanting-malasada-228ebc.netlify.app", // Netlify deployment
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    credentials: true,
+    origin: (origin, callback) => {
+      // Allow requests from allowed origins or no origin (e.g., Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow cookies/session headers
   })
 );
 
