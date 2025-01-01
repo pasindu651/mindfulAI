@@ -11,7 +11,7 @@ export const LandingPage = () => {
         <div className="text-center">
           <div className="relative w-full max-w-30rem h-auto">
             <Image
-              src="./mindfulAI/images/mindfulailogo.png"
+              src="/mindfulAI/images/mindfulailogo.png"
               alt="Mindful AI Logo"
               layout="responsive"
               width={249.5}
