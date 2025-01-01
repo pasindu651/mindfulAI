@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import cors from "cors";
 import session from "express-session";
-import Memorystore from "memorystore";
-
 import MongoStore from "connect-mongo";
 import routes from "./routes/routes.js";
 dotenv.config();
@@ -19,21 +17,16 @@ app.use(
   })
 );
 
-const MemoryStore = Memorystore(session);
-
 //configure session middleware
 app.use(
   session({
-    store: new MemoryStore({
-      checkPeriod: 86400000,
-    }),
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET, // Use a strong secret for your app
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS
       httpOnly: true,
-      maxAge: 3600000,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
 );
