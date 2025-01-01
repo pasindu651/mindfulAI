@@ -20,13 +20,13 @@ app.use(
 //configure session middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Use a strong secret for your app
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      maxAge: 1000 * 60 * 60 * 24,
     },
   })
 );
