@@ -20,7 +20,7 @@ app.use(
   })
 );
 
-const MongoStore = new connectMongo(session);
+const MongoStore = connectMongo(session);
 const clientPromise = MongoClient.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
