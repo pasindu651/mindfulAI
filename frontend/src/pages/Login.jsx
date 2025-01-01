@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
@@ -6,8 +6,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { IsLoggedInContext, SetIsLoggedInContext, UserContext } from "../App";
 import { Link } from "react-router-dom";
+import { Toast } from "primereact/toast";
 
 export default function Login() {
+  const toast = useRef(null);
+
   const SetIsLoggedIn = useContext(SetIsLoggedInContext);
   const IsLoggedIn = useContext(IsLoggedInContext);
 
@@ -35,21 +38,35 @@ export default function Login() {
               if (response.data.user) {
                 setUser(response.data.user);
                 SetIsLoggedIn(true);
-                //send data to frontend using state
                 navigate("/");
               }
             });
         } else {
           console.log(result.data.success);
-          alert(result.data.message || "Login failed");
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: result.data.message,
+            life: 3000,
+          });
         }
       })
       .catch((err) => {
         console.log(err);
         if (err.response) {
-          alert(`Login failed: ${err.response.data.message}`);
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: err.response.data.message,
+            life: 3000,
+          });
         } else {
-          alert("An unexpected error occurred. Please try again.");
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: "An unexpected error occured. Please try again.",
+            life: 3000,
+          });
         }
       });
   };
@@ -59,6 +76,8 @@ export default function Login() {
   });
   return (
     <>
+      <Toast ref={toast} />
+
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
           <div className="flex align-items-center justify-content-center m-2">

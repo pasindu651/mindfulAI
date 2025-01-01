@@ -19,10 +19,7 @@ export const LandingPage = () => {
             />
           </div>
           <p className="text-2xl font-bold mt-3">More time. Less Stress.</p>
-          <Button
-            label="Get Started"
-            onClick={() => navigate("/login")}
-          ></Button>
+          <Button onClick={() => navigate("/login")}>Get Started</Button>
         </div>
       </div>
     </>

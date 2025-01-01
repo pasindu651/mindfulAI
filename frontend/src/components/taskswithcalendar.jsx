@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
@@ -9,6 +9,7 @@ import { Card } from "primereact/Card";
 import { Panel } from "primereact/Panel";
 import { Accordion, AccordionTab } from "primereact/Accordion";
 import { TaskForm } from "./TaskForm";
+import { Toast } from "primereact/toast";
 
 //given a day, this function fetches the tasks for that day
 const fetchTasks = async (day, updateStateCallback) => {
@@ -22,17 +23,97 @@ const fetchTasks = async (day, updateStateCallback) => {
       updateStateCallback(response.data.data);
     })
     .catch((error) => {
-      console.log(error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: error.message,
+        life: 3000,
+      });
     });
 };
 
 export const TasksWithCalendar = () => {
+  const toast = useRef(null);
+
+  const createTask = () => {
+    //create task
+    axios
+      .post(
+        "http://localhost:500/api/task/create",
+        {
+          name: data.name,
+          dueDay: data.dueDay,
+          dueHour: data.dueHour,
+          dueMinute: data.dueMinute,
+          suffix: data.suffix,
+          durationHours: data.durationHours,
+          durationMinutes: data.durationMinutes,
+          startHour: aiTime.Hours,
+          startMinutes: aiTime.Minutes,
+        },
+        { withCredentials: true }
+      )
+      .then((result) => {
+        if (result.status == 201) {
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "Task Created Successfully",
+            life: 3000,
+          });
+          if (data.dueDay == day) {
+            //immediately rerender if the paginator is on the page where the task should be added
+            setTasks([
+              ...tasks,
+              {
+                _id: result.data.data,
+                name: data.name,
+                dueDay: data.dueDay,
+                dueHour: data.dueHour,
+                dueMinute: data.dueMinute,
+                suffix: data.suffix,
+                durationHours: data.durationHours,
+                durationMinutes: data.durationMinutes,
+                startHour: aiTime.Hours,
+                startMinutes: aiTime.Minutes,
+                done: false,
+              },
+            ]);
+          }
+
+          //reset the form once submitted
+          setData({
+            name: "",
+            dueDay: null,
+            dueHour: null,
+            dueMinute: null,
+            durationHours: null,
+            durationMinutes: null,
+          });
+        }
+        console.log(result);
+      })
+      .catch((error) => {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error.message,
+          life: 3000,
+        });
+      });
+  };
+
   const handleDelete = async (id) => {
     axios
       .delete(`http://localhost:500/api/task/${id}`)
       .then((result) => {
         if (result.status == 200) {
-          console.log("Task deleted successfully");
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "Task Deleted Successfully",
+            life: 3000,
+          });
           const taskRemoved = tasks.filter((task) => task._id !== id);
 
           // Update the state with the tasks array excluding the deleted task
@@ -40,7 +121,12 @@ export const TasksWithCalendar = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error.message,
+          life: 3000,
+        });
       });
   };
 
@@ -53,7 +139,12 @@ export const TasksWithCalendar = () => {
       )
       .then((result) => {
         if (result.status == 200) {
-          console.log("Task updated successfully");
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "Task Completed",
+            life: 3000,
+          });
           //update the task array so that the task that was updated has its 'done' changed to true
           let updatedTasks = tasks.map((task) => {
             if (task._id === id) {
@@ -66,7 +157,12 @@ export const TasksWithCalendar = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error.message,
+          life: 3000,
+        });
       });
   };
   const currentDate = new Date();
@@ -124,69 +220,16 @@ export const TasksWithCalendar = () => {
               Minutes: resultMinutes,
             });
           } catch (error) {
-            console.log(error);
+            toast.current.show({
+              severity: "error",
+              summary: "Error",
+              detail: error.message,
+              life: 3000,
+            });
           }
         });
     }
   }, [DesiredTasks]);
-
-  const createTask = () => {
-    //create task
-    axios
-      .post(
-        "http://localhost:500/api/task/create",
-        {
-          name: data.name,
-          dueDay: data.dueDay,
-          dueHour: data.dueHour,
-          dueMinute: data.dueMinute,
-          suffix: data.suffix,
-          durationHours: data.durationHours,
-          durationMinutes: data.durationMinutes,
-          startHour: aiTime.Hours,
-          startMinutes: aiTime.Minutes,
-        },
-        { withCredentials: true }
-      )
-      .then((result) => {
-        if (result.status == 201) {
-          console.log("Task created successfully");
-          if (data.dueDay == day) {
-            //immediately rerender if the paginator is on the page where the task should be added
-            setTasks([
-              ...tasks,
-              {
-                _id: result.data.data,
-                name: data.name,
-                dueDay: data.dueDay,
-                dueHour: data.dueHour,
-                dueMinute: data.dueMinute,
-                suffix: data.suffix,
-                durationHours: data.durationHours,
-                durationMinutes: data.durationMinutes,
-                startHour: aiTime.Hours,
-                startMinutes: aiTime.Minutes,
-                done: false,
-              },
-            ]);
-          }
-
-          //reset the form once submitted
-          setData({
-            name: "",
-            dueDay: null,
-            dueHour: null,
-            dueMinute: null,
-            durationHours: null,
-            durationMinutes: null,
-          });
-        }
-        console.log(result);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   const onPageChange = (event) => {
     setFirst(event.first);
@@ -243,6 +286,8 @@ export const TasksWithCalendar = () => {
 
   return (
     <>
+      <Toast ref={toast} />
+
       <h1 className="flex justify-content-center text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
         {dates[first / 10].dayOfWeek + " " + months[currentMonth] + " " + day}
       </h1>

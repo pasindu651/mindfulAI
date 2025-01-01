@@ -114,6 +114,7 @@ export const TaskForm = ({
           </div>
           <div className="flex align-items-center justify-content-center m-2">
             <Button
+              icon="pi pi-sparkles"
               onClick={handleSubmit}
               className="justify-content-center w-full"
             >
