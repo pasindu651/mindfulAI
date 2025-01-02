@@ -99,6 +99,7 @@ export default function Login() {
             <div className="flex flex-column gap-2">
               <label htmlFor="password">Password</label>
               <Password
+                feedback={false}
                 placeholder="Enter your password..."
                 value={data.password}
                 id="password"
