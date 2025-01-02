@@ -86,8 +86,6 @@ export const logout = async (req, res) => {
 };
 
 export const getUser = (req, res) => {
-  console.log("HI");
-  console.log("DEBUG IN getUser, request", req);
   //if the session is successfully created, send user information to frontend
   if (req.session.user) {
     res.json({ success: true, user: req.session.user });
