@@ -190,7 +190,6 @@ export const TasksWithCalendar = () => {
 
   useEffect(() => {
     if (DesiredTasks) {
-      console.log("Desired tasks: ", DesiredTasks);
       axios
         .post(
           "https://mindfulai.onrender.com/api/chat",

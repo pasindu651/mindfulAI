@@ -14,7 +14,7 @@ export const TaskForm = ({
 }) => {
   const toast = useRef(null);
   const handleSubmit = (e) => {
-    console.log(data);
+    console.log("data", data);
     if (
       !data.name ||
       data.dueDay === null ||
