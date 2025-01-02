@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
 
 export const TaskForm = ({
   data,
@@ -11,7 +12,24 @@ export const TaskForm = ({
   setDesiredTasks,
   numDays,
 }) => {
+  const toast = useRef(null);
   const handleSubmit = (e) => {
+    if (
+      !data.name ||
+      !data.dueDay ||
+      !data.dueHour ||
+      !data.dueMinute ||
+      !data.suffix ||
+      !data.durationHours ||
+      !data.durationMinutes
+    ) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Please complete all fields",
+        life: 3000,
+      });
+    }
     e.preventDefault();
     fetchTasks(data.dueDay, setDesiredTasks);
   };
@@ -23,6 +41,8 @@ export const TaskForm = ({
   const minutes = Array.from({ length: 60 }, (_, i) => i);
   return (
     <>
+      <Toast ref={toast} />
+
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
           <div className="flex align-items-center justify-content-center m-2">
