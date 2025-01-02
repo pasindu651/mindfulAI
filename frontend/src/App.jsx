@@ -37,15 +37,11 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route
                 path="/register"
-                element={
-                  IsLoggedIn ? <Navigate to="/" /> : <Navigate to="/register" />
-                }
+                element={IsLoggedIn ? <Navigate to="/" /> : <Register />}
               />
               <Route
                 path="/login"
-                element={
-                  IsLoggedIn ? <Navigate to="/" /> : <Navigate to="/login" />
-                }
+                element={IsLoggedIn ? <Navigate to="/" /> : <Login />}
               />
             </Routes>
           </SetIsLoggedInContext.Provider>

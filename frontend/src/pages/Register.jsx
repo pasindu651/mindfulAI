@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { Toast } from "primereact/toast";
 
 export default function Register() {
+  const toast = useRef(null);
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,7 +27,12 @@ export default function Register() {
       })
       .catch((err) => {
         if (err.response && err.response.status == 400) {
-          alert("Email already exists.");
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: "Email already exists",
+            life: 3000,
+          });
         } else {
           console.log(err);
         }
@@ -41,6 +48,8 @@ export default function Register() {
 
   return (
     <>
+      <Toast ref={toast} />
+
       <div className="flex justify-content-center">
         <div className="flex flex-column max-w-max">
           <div className="flex align-items-center justify-content-center m-2">
