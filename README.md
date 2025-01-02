@@ -65,5 +65,5 @@ The application will be available at: [http://localhost:5173/](http://localhost:
 - As a beginner in the MERN stack, I quickly learned and implemented best practices, such as dividing code into multiple components to enhance readability and organizing routes in a dedicated routes file.
   
 ## Challenges and future changes:
-- Despite successfully implementing a login/signup system, the app was experiencing issues with logging out (where the session would not be successfully destroyed). Therefore, if the user was to logout and reload the page, they would still be logged in. Despite debugging this issue for days, it was met with no success.
+- Despite successfully implementing a login/signup system, the app was experiencing issues with logging out (where the session would not be successfully destroyed). Therefore, if the user was to logout and reload the page, they would still be logged in. I debugged this issue for days, and was met with no success. However, I am looking to fix this bug as soon as possible. 
 - As of now, the app only supports scheduling for the current month. Since this is only my second React app, I focused on developing a simple, functional version of the app, before expanding its capabilities which allow users to schedule tasks for future months.
