@@ -16,12 +16,12 @@ export const TaskForm = ({
   const handleSubmit = (e) => {
     if (
       !data.name ||
-      !data.dueDay ||
-      !data.dueHour ||
-      !data.dueMinute ||
-      !data.suffix ||
-      !data.durationHours ||
-      !data.durationMinutes
+      data.dueDay === null ||
+      data.dueHour === null ||
+      data.dueMinute === null ||
+      data.suffix === null ||
+      data.durationHours === null ||
+      data.durationMinutes === null
     ) {
       toast.current.show({
         severity: "error",
@@ -29,6 +29,7 @@ export const TaskForm = ({
         detail: "Please complete all fields",
         life: 3000,
       });
+      return;
     }
     e.preventDefault();
     fetchTasks(data.dueDay, setDesiredTasks);
