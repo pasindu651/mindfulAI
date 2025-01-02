@@ -50,17 +50,20 @@ cd frontend
 npm run dev
 ```
 The application will be available at: [http://localhost:5173/](http://localhost:5173/)
-**Note that you will have to use your own chatGPT API key
+**Note that you will have to use your own chatGPT API key**
 
 ## Accomplishments:
 
 ### Successful integration of chatGPT API with mongoDB backend 
-- I am proud of successfully integrating requests to the MongoDB backend with responses sent from the ChatGPT API, enabling seamless creation of schedules
+- I am proud of successfully integrating requests to the MongoDB backend with responses sent from the ChatGPT API, enabling seamless creation of schedules. I learned about the useEffect hook which was crucial in ensuring that requests were made to the endpoints ONLY after a certain field was populated (ie. the chatGPT API was supposed to return a response BEFORE a request was made to the create task endpoint).
   
 ### Successful creation of calendar component
 - Primereact was a great library to use for simple buttons, forms, etc. However, no calendar component matched the needs of the application (allowing the user to navigate between tasks from different days). Hence, I had to create my own component that fitted my needs using the already existing paginator component. This complicated displaying tasks because I would then need to fetch the tasks of each day when the user navigates to a new day.
-- In addition, if the user was on the day where the task WAS TO BE ADDED, it would need to be updated instananeously to display the tasks existing in the backend as well as the newly created task. 
+- In addition, if the user was on the day where the task WAS TO BE ADDED, it would need to be updated instananeously to display the tasks existing in the backend as well as the newly created task.
 
+### Good practices
+- As a beginner in the MERN stack, I quickly learned and implemented best practices, such as dividing code into multiple components to enhance readability and organizing routes in a dedicated routes file.
+  
 ## Challenges and future changes:
 - Despite successfully implementing a login/signup system, the app was experiencing issues with logging out (where the session would not be successfully destroyed). Therefore, if the user was to logout and reload the page, they would still be logged in. Despite debugging this issue for days, it was met with no success.
 - As of now, the app only supports scheduling for the current month. Since this is only my second React app, I focused on developing a simple, functional version of the app, before expanding its capabilities which allow users to schedule tasks for future months.
