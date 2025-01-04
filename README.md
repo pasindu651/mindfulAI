@@ -10,7 +10,7 @@ The latest online deployment of the application can be found at https://mindfula
 - **mongoDB** to store user information, sessions, and task information
 - **Axios** for requests from the client side to the server side
 - **NodeJS**, **React**, and **Primereact** for the frontend
-- **chatGPT** API for optimizing the start time of tasks based on the existing schedule
+- **Open AI GPT-4o** API for optimizing the start time of tasks based on the existing schedule
 
 ## How to Run Project Locally:
 
@@ -50,12 +50,12 @@ cd frontend
 npm run dev
 ```
 The application will be available at: [http://localhost:5173/](http://localhost:5173/)
-**Note that you will have to use your own chatGPT API key**
+**Note that you will have to use your own OpenAI API key**
 
 ## Accomplishments:
 
-### Successful integration of chatGPT API with mongoDB backend 
-- I am proud of successfully integrating requests to the MongoDB backend with responses sent from the ChatGPT API, enabling seamless creation of schedules. I learned about the useEffect hook which was crucial in ensuring that requests were made to the endpoints ONLY after a certain field was populated (ie. the chatGPT API was supposed to return a response BEFORE a request was made to the create task endpoint).
+### Successful integration of GPT-4o with mongoDB backend 
+- I am proud of successfully integrating requests to the MongoDB backend with responses sent from the OpenAI API, enabling seamless creation of schedules. I learned about the useEffect hook which was crucial in ensuring that requests were made to the endpoints ONLY after a certain field was populated (ie. the OpenAI API was supposed to return a response BEFORE a request was made to the create task endpoint).
   
 ### Successful creation of calendar component
 - Primereact was a great library to use for simple buttons, forms, etc. However, no calendar component matched the needs of the application (allowing the user to navigate between tasks from different days). Hence, I had to create my own component that fitted my needs using the already existing paginator component. This complicated displaying tasks because I would then need to fetch the tasks of each day when the user navigates to a new day.
