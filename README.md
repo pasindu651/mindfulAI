@@ -4,7 +4,7 @@
 MindfulAI is a productivity app designed to help users effortlessly plan their monthly schedules with the power of AI. It combines a friendly user interface with easy navigation, task creation, and completion. Users can easily input details about their task (e.g., due date, duration). The app then generates the optimal schedule based on the user's existing commitments for that day.
 
 The latest online deployment of the application can be found at https://mindfulaiproductivity.netlify.app/
-I used render to host the backend and netlify for the frontend.
+. I used render to host the backend and netlify for the frontend.
 
 ## The stack
 - **ExpressJS** for http requests
