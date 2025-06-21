@@ -1,5 +1,8 @@
 ![MindfulAI logo](https://i.ibb.co/x8gcZs6/mindfulailogo.png)
 
+## Demo Video:
+https://github.com/user-attachments/assets/972c4f67-63d7-4880-a684-b2f7f13d2bcf
+
 ## Overwiew:
 MindfulAI is a productivity app designed to help users effortlessly plan their monthly schedules with the power of AI. It combines a friendly user interface with easy navigation, task creation, and completion. Users can easily input details about their task (e.g., due date, duration). The app then generates the optimal schedule based on the user's existing commitments for that day.
 
